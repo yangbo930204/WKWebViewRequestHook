@@ -35,7 +35,7 @@
     NSString *ajaxhook = [NSString stringWithContentsOfFile:jspath encoding:NSUTF8StringEncoding error:nil];
     WKUserScript *sc = [[WKUserScript alloc] initWithSource:ajaxhook injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO];
     [[config userContentController] addUserScript:sc];
-    
+
     jspath = [[NSBundle mainBundle] pathForResource:@"jquery.min.js" ofType:nil];
     NSString *jquery = [NSString stringWithContentsOfFile:jspath encoding:NSUTF8StringEncoding error:nil];
     WKUserScript *jqsc = [[WKUserScript alloc] initWithSource:jquery injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO];
@@ -46,19 +46,36 @@
     WKUserScript *xhrhooksc = [[WKUserScript alloc] initWithSource:xhrhook injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO];
     [[config userContentController] addUserScript:xhrhooksc];
     
+//    NSString *jspath = [[NSBundle mainBundle] pathForResource:@"xbox.js" ofType:nil];
+//    NSString *xhrhook = [NSString stringWithContentsOfFile:jspath encoding:NSUTF8StringEncoding error:nil];
+//    WKUserScript *xhrhooksc = [[WKUserScript alloc] initWithSource:xhrhook injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO];
+//    [[config userContentController] addUserScript:xhrhooksc];
+//
     WebViewPostHandler *postHandler = [WebViewPostHandler new];
     [[config userContentController] addScriptMessageHandler:postHandler name:@"save"];
     
 //    */
     //不缓存webview的数据
-    config.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+//    config.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
     self.webview = [[WKWebView alloc] initWithFrame:self.view.frame configuration:config];
-
+    [self.webview evaluateJavaScript:@"navigator.userAgent" completionHandler:^(id _Nullable data, NSError * _Nullable error) {
+            
+        if ([data isKindOfClass:[NSString class]]) {
+            self.webview.customUserAgent = [NSString stringWithFormat:@"XGP365_IOS"];
+        }
+    }];
     [self.view addSubview:_webview];
     
     //加载网址
     [_webview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:_urlString]]];
     
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    
+    CGFloat tempTop = self.navigationController.navigationBar.frame.size.height + self.navigationController.navigationBar.frame.origin.y;
+    self.webview.frame = CGRectMake(0, tempTop, self.view.frame.size.width, self.view.frame.size.height - tempTop);
 }
 
 

@@ -36,7 +36,7 @@
     ViewController *vc = [ViewController new];
     //设置vc需要访问的网址和hook的状态
     vc.openHook = _shouldHook;
-    vc.urlString = Baidu;
+    vc.urlString = @"https://www.xbox.com/en-US/play";
     [self.navigationController pushViewController:vc animated:YES];
 
 }

@@ -29,8 +29,10 @@
     
     NSString *urlkey = [data[@"key"] lowercaseString];
     NSString *urlvalue = data[@"value"][0];
-    [[NSUserDefaults standardUserDefaults] setObject:urlvalue forKey:urlkey];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    if ([urlvalue isKindOfClass:[NSString class]] && [urlvalue length] > 0) {
+        [[NSUserDefaults standardUserDefaults] setObject:urlvalue forKey:urlkey];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
 }
 
 @end

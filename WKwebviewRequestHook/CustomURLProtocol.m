@@ -38,9 +38,33 @@ static NSString *const HookPropertyKey = @"HookPropertyKey";
 
     NSMutableURLRequest *mutableReqeust = [request mutableCopy];
     // 执行自定义操作，例如添加统一的请求头等
+    if ([self checkCorsAllAllowed:request.URL.absoluteString]) {
+        [mutableReqeust setValue:@"4.2.2.2" forHTTPHeaderField:@"X-Forwarded-For"];
+    }
+    
     return mutableReqeust;
 }
 
++(BOOL)checkCorsAllowed:(NSString *)url {
+    if ([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] || [url hasPrefix:@"://"]) {
+        return NO;
+    }
+    return YES;
+}
+
++(BOOL)checkCorsWhitelistAllowed:(NSString *)url {
+    if ([url containsString:@"://xgpuweb.gssv-play-prod.xboxlive.com"] || [url containsString:@"://www.xbox.com"]) {
+        return YES;
+    }
+    return NO;
+}
+
++(BOOL)checkCorsAllAllowed:(NSString *)url {
+    if ([self checkCorsAllowed:url] || [self checkCorsWhitelistAllowed:url]) {
+        return YES;
+    }
+    return NO;
+}
 
 + (BOOL)requestIsCacheEquivalent:(NSURLRequest *)a toRequest:(NSURLRequest *)b
 {
